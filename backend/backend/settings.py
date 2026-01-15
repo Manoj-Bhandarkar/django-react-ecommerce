@@ -128,7 +128,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-
+AUTH_USER_MODEL = 'userauth.User'
 
 JAZZMIN_SETTINGS = {
     "site_title": "ManojX",
