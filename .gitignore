@@ -1,0 +1,67 @@
+#################################
+# Python / Django
+#################################
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django files
+db.sqlite3
+*.log
+local_settings.py
+
+# Virtual environments
+env/
+venv/
+.venv/
+ENV/
+
+# Environment variables
+.env
+.env.*
+
+# Media & static (optional – adjust if needed)
+media/
+staticfiles/
+
+#################################
+# React / Node
+#################################
+node_modules/
+dist/
+build/
+.vite/
+
+# npm / yarn / pnpm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+#################################
+# IDE / OS
+#################################
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+#################################
+# Git
+#################################
+*.swp
+*.swo
+
+#################################
+# Tests / Coverage
+#################################
+.coverage
+htmlcov/
+pytest_cache/
+
+#################################
+# Optional
+#################################
+# Uncomment if you don't want migrations
+# */migrations/*.py
+# !*/migrations/__init__.py
