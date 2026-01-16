@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 from shortuuid.django_fields import ShortUUIDField
+from django.db.models.signals import post_save
 
 # Create your models here.
 class User(AbstractUser):
@@ -11,7 +12,9 @@ class User(AbstractUser):
 
     full_name = models.CharField(max_length=100, blank=True, null=True)
     phone = models.CharField(max_length=100, blank=True, null=True)
-
+    date_joined = models.DateTimeField(auto_now_add=True)
+    last_login = models.DateTimeField(auto_now=True)
+    
     USERNAME_FIELD = 'email'    #login though email not by username
     REQUIRED_FIELDS = ['username']
 
@@ -29,7 +32,7 @@ class User(AbstractUser):
 
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     image = models.FileField(upload_to="image", default="default/default-user.jpg", null=True,blank=True)
     full_name = models.CharField(max_length=100, null=True, blank=True)
     about = models.TextField(null=True, blank=True)
@@ -52,3 +55,15 @@ class Profile(models.Model):
             self.full_name = self.user.first_name
     
         super(Profile, self).save(*args, **kwargs)
+
+
+#django signals
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
+
+post_save.connect(create_user_profile, sender=User)
+post_save.connect(save_user_profile, sender=User)
