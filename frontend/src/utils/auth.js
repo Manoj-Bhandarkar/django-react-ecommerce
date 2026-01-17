@@ -2,7 +2,7 @@ import { useAuthStore } from "../store/auth";
 
 import axios from "./axios";
 import jwt_decode from "jwt_decode"
-import Cookies from 'js-cookie'
+import Cookies from 'js-Cookies'
 
 export const login = async (email, password) => {
     try {
@@ -18,7 +18,7 @@ export const login = async (email, password) => {
     catch (error) {
         return {
             data: null,
-            error: error.response.data?.detail || 'Something went wrong'
+            error: error?.response?.data?.detail || 'Something went wrong'
         }
     }
 }
@@ -38,7 +38,7 @@ export const register = async (full_name, email, phone, password, password2) => 
     catch (error) {
         return {
             data: null,
-            error: error.response.data?.detail || 'Something went wrong'
+            error: error?.response?.data?.detail || 'Something went wrong'
         }
     }
 }
@@ -50,15 +50,15 @@ export const logout = () => {
 }
 
 export const setUser = async () => {
-    const accessToken = Cookie.get("access_token")
-    const refreshToken = Cookie.get("refresh_token")
+    const accessToken = Cookies.get("access_token")
+    const refreshToken = Cookies.get("refresh_token")
 
     if (!accessToken || !refreshToken) {
         return;
     }
 
     if (isAccessTokenExpired(accessToken)) {
-        const response = await getRefreshToken(refreshToken)
+        const response = await getRefreshToken()
         setAuthUser(response.access, response.refresh)
     } else {
         setAuthUser(accessToken, refreshToken)
@@ -77,9 +77,7 @@ export const setAuthUser = (access_token, refresh_token) => {
 
     const user = jwt_decode(access_token) ?? null
 
-    if(user){
-        useAuthStore.getState().setUser(user)
-    }
+    useAuthStore.getState().setUser(user)
     useAuthStore.getState().setLoading(false)
 }
 
@@ -95,7 +93,7 @@ export const getRefreshToken = async () => {
 export const isAccessTokenExpired = (accessToken) => {
     try{
         const decodedToken = jwt_decode(accessToken)
-        return decodedToken.exp < Date.now() / 100
+        return decodedToken.exp < Date.now() / 1000
     }catch(error){
         console.log(error)
         return true
