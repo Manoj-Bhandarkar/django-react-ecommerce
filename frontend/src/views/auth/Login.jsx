@@ -6,15 +6,61 @@ import { useAuthStore } from '../../store/auth'
 
 
 function Login() {
-    const [ username, setUsername ] = useState("Manoj");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("")
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
+    const isLoggedIn = useAuthStore((state) => state.isLoggedIn)
 
-    console.log(username)
-    const navigate = useNavigate()
+    useEffect(() => {
+        if (isLoggedIn()) {
+            navigate('/')
+        }
+    })
 
+    const resetForm = () => {
+        setEmail("")
+        setPassword("")
+    }
 
+    const handleLogin = (e) => {
+        e.preventDefault()
+        setIsLoading(true)
+
+        const { error } = login(email, password)
+        if (error) {
+            alert(error)
+        } else {
+            navigate("/")
+            resetForm()
+        }
+        setIsLoading(false)
+    }
     return (
         <div>Login
             <h2>dfdffd</h2>
+            <form onSubmit={handleLogin}>
+                <input
+                    type="text"
+                    name='email' id='email'
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+                <br />
+                <br />
+                <input
+                    type="password"
+                    name='password'
+                    id='password'
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+                <br />
+                <br />
+                <button type='submit'>
+                    Login
+                </button>
+            </form>
         </div>
     )
 }
