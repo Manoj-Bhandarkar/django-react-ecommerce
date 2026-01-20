@@ -12,6 +12,8 @@ class User(AbstractUser):
 
     full_name = models.CharField(max_length=100, blank=True, null=True)
     phone = models.CharField(max_length=100, blank=True, null=True)
+    otp = models.CharField(max_length=100, blank=True, null=True)
+
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
     
