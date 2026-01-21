@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from userauth.models import User, Profile
 from userauth.serializer import (
@@ -10,6 +10,7 @@ from userauth.serializer import (
 )
 import random
 import shortuuid
+from rest_framework.response import Response
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -47,3 +48,26 @@ class PasswordResetEmailVerifyView(generics.RetrieveAPIView):
             print("link:=", link)
             # send Email
         return user
+
+
+class PasswordChangeView(generics.CreateAPIView):
+    permission_classes = (AllowAny,)
+    serializer_classe = UserSerializer
+
+    def create(self, request, *args, **kwargs):
+        payload = request.data
+        otp = payload["otp"]
+        uidb64 = payload["uidb64"]
+        reset_token = payload["reset_token"]
+        password = payload["password"]
+       
+
+        user = User.objects.get(id=uidb64, otp=otp)
+        if user:
+            user.set_password(password)
+            user.otp = ""
+            user.reset_token = ""
+            user.save()
+            return Response("message: Password Changed Successfully",status=status.HTTP_201_CREATED)
+        else:
+            return Response("message: An Error Occured",status=status.HTTP_500_INTERNAL_SERVER_ERROR)
